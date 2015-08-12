@@ -110,11 +110,12 @@ def main():
 
     if ID:
       if ID != IDtmp:
-        pID = str(int(ID[2:], 16))
+        pID = str(ID)
         lcd_backlight(True)
         lcd_string("Reading RFID tag ...",LCD_LINE_1,1)
         lcd_string("ID:   "+ pID.zfill(10),LCD_LINE_2,1)
-        if ID == "valid":
+        if pID == "valid":
+            print "user ok"
             result = ['geraffel-user',]
         else:
             result = None
@@ -146,8 +147,7 @@ def main():
 
 def read_rfid():
   print "please input RFID:"
-  data = sys.stdin.readline()
-  print data
+  data = sys.stdin.readline().strip('\n')
   if data != '':
       return data
 
