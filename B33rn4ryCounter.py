@@ -5,8 +5,7 @@ import RPi.GPIO as GPIO
 import serial
 import time
 import datetime
-import MySQLdb
-import os
+import os,sys
  
 # Define GPIO mapping
 LCD_RS = 25
@@ -61,10 +60,6 @@ def main():
   # Initialise display
   lcd_init()
 
-  # Connect to mySQL db
-  db = MySQLdb.connect(host="localhost", user="b33rn4ry", passwd="b33rn4ry", db="b33rn4rycounter")
-  cursor=db.cursor()
-
 #  lcd_backlight(True)
 #  time.sleep(0.5)
 #  lcd_string("Uncomressing kernel...",LCD_LINE_1,1)
@@ -97,8 +92,10 @@ def main():
         lcd_backlight(True)
         lcd_string("Reading RFID tag ...",LCD_LINE_1,1)
         lcd_string("ID:   "+ pID.zfill(10),LCD_LINE_2,1)
-        cursor.execute ("SELECT `name` FROM `users` WHERE id = '"+ID+"';")
-        result = cursor.fetchone()
+        if ID == "valid":
+            result = ['geraffel-user',]
+        else:
+            result = None
         if result is not None:
           lcd_string("User: "+str(result[0]),LCD_LINE_3,1)
           #lcd_string("ACCESS GRANTED!",LCD_LINE_3,1)
@@ -121,15 +118,9 @@ def main():
       IDtmp = ""
 
 def read_rfid():
-  try:
-    ser = serial.Serial(SERIAL_DEVICE, BAUDRATE, timeout=1) 
-  except serial.serialutil.SerialException:
-    print "Could not open serial device " +SERIAL_DEVICE
-  data = ser.read(1)
-  while data != RFID_START and data != '':
-      data = ser.read(1)
-  data = ser.read(10)
-  ser.close()
+  print "please input RFID:"
+  data = sys.stdin.readline()
+  print data
   if data != '':
       return data
 
